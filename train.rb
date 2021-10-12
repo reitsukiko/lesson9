@@ -1,15 +1,24 @@
 class Train
-  attr_accessor :speed, :train_type
+  attr_accessor :speed, :train_type, :manufacturer
   attr_reader :num_train, :current_station, :wagons
+  
+  include Company
+  include InstanceCounter
   
   @@trains = {}
 
   def initialize(num_train, train_type)
     @num_train = num_train
     @train_type = train_type
-    @@trains[num_train] = type
+    @@trains[num_train] = train_type
     @wagons = []
     @speed = 0
+    register_instance
+  end
+  
+  def self.find(num_train)
+    return unless num_train == nil
+    @@trains.find{ |train| train[num_train] == num_train}
   end
   
   def Train.get_trains
@@ -53,7 +62,7 @@ class Train
   end
 
   def back_train
-    return unless next_station
+    return unless previous_station
     @current_station.go_train(self)
     @current_station = previous_station
     @current_station.add_train(self)

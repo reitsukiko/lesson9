@@ -1,5 +1,5 @@
 class RailRoad
-  attr_reader :stations, :trains, :routes, :wagons, :rr_menu, :rr_menu2
+  attr_reader :stations, :trains, :routes, :wagons, :rr_menu, :rr_menu2, :input, :rr_menu2_input
 
   def initialize
     @stations = []

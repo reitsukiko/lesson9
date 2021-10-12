@@ -1,5 +1,8 @@
 class Wagon
   attr_reader :num_wagon, wagon_type
+  attr_accessor :manufacturer
+  
+  include Company
   
   @@wagons = {}
   
