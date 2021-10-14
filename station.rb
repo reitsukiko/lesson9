@@ -3,6 +3,8 @@ class Station
   attr_accessor :trains
   
   include InstanceCounter
+  include Validation
+  include ValidStation
 
   @@stations = []
   
@@ -11,10 +13,11 @@ class Station
   end
   
   def initialize(name)
-    @name = name
+    @station_name = name
     @trains = []
     @@stations.push(self)
     register_instance
+    validate!
   end
   
   def add_train(train)

@@ -4,6 +4,8 @@ class Train
   
   include Company
   include InstanceCounter
+  include Validation
+  include ValidTrain
   
   @@trains = {}
 
@@ -14,6 +16,7 @@ class Train
     @wagons = []
     @speed = 0
     register_instance
+    validate!
   end
   
   def self.find(num_train)

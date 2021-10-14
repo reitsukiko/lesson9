@@ -1,11 +1,17 @@
 class RailRoad
   attr_reader :stations, :trains, :routes, :wagons, :rr_menu, :rr_menu2, :input, :rr_menu2_input
+  
+  include Validation
+  include ValidTrain
+  include ValidWagon
+  include ValidStation
 
   def initialize
     @stations = []
     @trains = []
     @routes = []
     @wagons = []
+    validate!
   end
   
   def menu
@@ -20,32 +26,19 @@ class RailRoad
       end
       
       case point
-      when 1
-        self.new_train
-      when 2
-        self.new_wagon
-      when 3
-        self.new_station
-      when 4
-        self.new_route
-      when 5
-        self.add_wagon
-      when 6
-        self.delete_wagon
-      when 7
-        self.add_station
-      when 8
-        self.delete_station
-      when 9
-        self.take_route
-      when 10
-        self.move_train
-      when 11
-        self.back_train
-      when 12
-        self.trains_list
-      when 13
-        self.station_list
+      when 1 then self.new_train
+      when 2 then self.new_wagon
+      when 3 then self.new_station
+      when 4 then self.new_route
+      when 5 then self.add_wagon
+      when 6 then self.delete_wagon
+      when 7 then self.add_station
+      when 8 then self.delete_station
+      when 9 then self.take_route
+      when 10 then self.move_train
+      when 11 then self.back_train
+      when 12 then self.trains_list
+      when 13 then self.station_list
       else
         puts 'Команды нет в списке'
       end
@@ -284,11 +277,11 @@ class RailRoad
   end
 
   def search_train(num_train)
-    @trains.find { |train| train.type == train_type}
+    @trains.find { |train| train.train_type == num_train }
   end
 
   def search_wagon(num_wagon)
-    @wagons.find { |wagon| wagon.type == wagon_type}
+    @wagons.find { |wagon| wagon.wagon_type == num_wagon }
   end
 end
 

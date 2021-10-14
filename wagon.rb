@@ -3,6 +3,8 @@ class Wagon
   attr_accessor :manufacturer
   
   include Company
+  include Validation
+  include ValidWagon
   
   @@wagons = {}
   
@@ -11,6 +13,7 @@ class Wagon
     @wagon_type = wagon_type
     @@wagons[num_wagon] = wagon_type
     @trains = []
+    validate!
   end
   
   def Wagon.get_wagons
