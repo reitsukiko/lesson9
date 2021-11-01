@@ -1,6 +1,5 @@
 class Station
-  attr_reader :name
-  attr_accessor :trains
+  attr_reader :name, :trains
   
   include InstanceCounter
   include Validation
@@ -33,4 +32,13 @@ class Station
     puts "clickety clack"
   end
 
+  def find_trains
+    @trains.each { |train| yield(train)}
+  end
+  
+  def trains_info
+    find_trains do |train|
+      puts "#{train.train_num}, #{train.train_type}"
+    end
+  end
 end

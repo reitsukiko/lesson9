@@ -5,6 +5,8 @@ class RailRoad
   include ValidTrain
   include ValidWagon
   include ValidStation
+  include ValidPlace
+  include ValidCargo
 
   def initialize
     @stations = []
@@ -32,13 +34,17 @@ class RailRoad
       when 4 then self.new_route
       when 5 then self.add_wagon
       when 6 then self.delete_wagon
-      when 7 then self.add_station
-      when 8 then self.delete_station
-      when 9 then self.take_route
-      when 10 then self.move_train
-      when 11 then self.back_train
-      when 12 then self.trains_list
-      when 13 then self.station_list
+      when 7 then self.take_cargo_place
+      when 8 then self.add_station
+      when 9 then self.delete_station
+      when 10 then self.take_route
+      when 11 then self.move_train
+      when 12 then self.back_train
+      when 13 then self.trains_list
+      when 14 then self.station_list
+      when 15 then self.wagon_list
+      when 16 then self.wagon_train
+      when 17 then self.wagon_station
       else
         puts 'Команды нет в списке'
       end
@@ -64,12 +70,13 @@ class RailRoad
       puts "Для создания станции нажмите 3"
       puts "Для создания маршрута нажмите 4"
     elsif @input == 2
-      puts "Для добавления вагона нажмите 5, для удаления вагона 6"
-      puts "Чтобы добавить станцию в маршрут нажмите 7, удалить станцию 8"
-      puts "Назначить маршрут поезду 9"
-      puts "Для перемещения поезда вперёд 10, для перемещения поезда назад 11"
+      puts "Для добавления вагона нажмите 5, для удаления вагона 6. Занять в вагоне место/объём - 7"
+      puts "Чтобы добавить станцию в маршрут нажмите 8, удалить станцию 9"
+      puts "Назначить маршрут поезду 10"
+      puts "Для перемещения поезда вперёд 11, для перемещения поезда назад 12"
     elsif @input == 3
-      puts "Для просмотра созданных поездов нажмите 12, станций 13"
+      puts "Для просмотра созданных поездов нажмите 13, станций 14, вагонов 15"
+      puts "Для просмотра вагонов определённого поезда нажмите 16, поездов на конкретной станции нажмите 17"
     end
   end
   
@@ -90,7 +97,8 @@ class RailRoad
     if train_type == "cargo"
       train = TrainCargo.new(num_train, train_type)
       @trains.push(TrainCargo.new(num_train, train_type))
-    elsif train_type == "passenger"
+    elsif
+      train_type == "passenger"
       train = TrainPassenger.new(num_train, train_type)
       @trains.push(TrainPassenger.new(num_train, train_type))
     end
@@ -98,9 +106,6 @@ class RailRoad
   end
   
   def new_wagon
-    print "Назовите вагон"
-    wagon = gets.chomp.downcase
-    
     print "Номер вагона: "
     num_wagon = gets.chomp.to_i
   
@@ -108,12 +113,17 @@ class RailRoad
     wagon_type = gets.chomp.downcase
   
     if wagon_type == 'cargo'
-      wagon = WagonCargo.new(num_wagon, wagon_type)
-      @wagons.push(WagonCargo.new(num_wagon, wagon_type))
-    elsif
-      wagon_type == 'passenger'
-      wagon = WagonPassenger.new(num_wagon, wagon_type)
-      @wagons.push(WagonPassenger.new(num_wagon, wagon_type))
+      puts "Укажите объём вагона"
+      cargo = gets.chomp.to_i
+      
+      wagon = WagonCargo.new(num_wagon, wagon_type, cargo)
+      @wagons.push(WagonCargo.new(num_wagon, wagon_type, cargo))
+    else
+      puts "Укажите количество мест в вагоне"
+      place = gets.chomp.to_i
+      
+      wagon = WagonPassenger.new(num_wagon, wagon_type, place)
+      @wagons.push(WagonPassenger.new(num_wagon, wagon_type, place))
     end
     puts "Вы создали вагон #{wagons.last.wagon}."
   end
@@ -143,14 +153,14 @@ class RailRoad
   end
   
   def add_wagon
-    print "Номер поезда, к которому необходимо добавить вагон: "
+    print "Номер поезда, к которому необходимо прицепить вагон: "
     num_train = gets.chomp.to_i
     
     print "Номер вагона: "
     num_wagon = gets.chomp.to_i
     
     train = search_train(num_train)
-    wagon = search_wagon(num_wagon)
+    num_wagon = search_wagon(num_wagon)
     if wagon.type == train.type
       num_train = get_train(num_train)
       trains.fetch(num_train).add_wagon(num_wagon)
@@ -161,14 +171,14 @@ class RailRoad
   end
 
   def delete_wagon
-    print "Номер поезда, к которому необходимо добавить вагон: "
+    print "Номер поезда, у которого необходимо отцепить вагон: "
     num_train = gets.chomp.to_i
   
     print "Номер вагона: "
     num_wagon = gets.chomp.to_i
   
     train = search_train(num_train)
-    wagon = search_wagon(num_wagon)
+    num_wagon = search_wagon(num_wagon)
     if wagon.wagon_type == train.train_type
       @trains.delete(num_wagon)
       puts "Вагон удалён"
@@ -218,10 +228,10 @@ class RailRoad
     print "Название маршрута, который будет назначен поезду: "
     route_name = gets.chomp.downcase
       
-    number = get_train(number)
+    num_train = get_train(num_train)
     route_name = get_route(route_name)
       
-    if trains.fetch(number).take_route(routes.fetch(route_name))
+    if trains.fetch(num_train).take_route(routes.fetch(route_name))
       puts "Поезду назначен маршрут"
     else
       puts "Указанных поезда/маршрута не существует"
@@ -251,6 +261,39 @@ class RailRoad
       puts "Мы не можем вернуться, поезда не существует"
     end
   end
+  
+  def take_cargo_place
+    print "Номер вагона: "
+    num_wagon = gets.chomp.to_i
+    
+    num_wagon = search_wagon(num_wagon)
+    if wagon.wagon_type == 'cargo'
+      puts "Укажите объём, который нужно занять"
+      volume = gets.chomp.to_i
+      
+      num_wagon = get_wagon(num_wagon)
+      @wagons.fetch(num_wagon).take_cargo(volume)(self)
+    else
+      num_wagon = get_wagon(num_wagon)
+      @wagons.fetch(num_wagon).take_place(self)
+    end
+  end
+      
+  def wagon_train
+    print "Введите номер поезда"
+    num_train = gets.chomp.to_i
+    
+    num_train = get_train(num_train)
+    @trains.fetch(num_train).wagons_info(self)
+  end
+      
+  def train_station
+    print "Введите название станции"
+    station_name = gets.chomp.downcase
+    
+    station_name = get_station(station_name)
+    @stations.fetch(station_name).trains_info(self)
+  end
 
   def list_stations
     puts "#{@stations}"
@@ -260,12 +303,16 @@ class RailRoad
     puts "#{@trains}"
   end
   
+  def wagons_list
+    puts "#{@wagons}"
+  end
+  
   def get_train(num_train)
     @trains.index(num_train)
   end
   
-  def get_wagon(wagon_type)
-    @wagons.index(wagon_type)
+  def get_wagon(num_wagon)
+    @wagons.index(num_wagon)
   end
   
   def get_route(route_name)
@@ -277,11 +324,11 @@ class RailRoad
   end
 
   def search_train(num_train)
-    @trains.find { |train| train.train_type == num_train }
+    @trains.find { |train| train.num_train == train_type }
   end
 
   def search_wagon(num_wagon)
-    @wagons.find { |wagon| wagon.wagon_type == num_wagon }
+    @wagons.find { |wagon| wagon.num_wagon == wagon_type }
   end
 end
 

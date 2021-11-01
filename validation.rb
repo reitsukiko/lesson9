@@ -15,7 +15,7 @@ module ValidTrain
 end
 
 module ValidWagon
-  NUM_WAGON = /^\d{3}$/i
+  NUM_WAGON = /^\d{3}$/
   def validate!
     raise "Номер не может быть пустым" if num_wagon.nil?
     raise "Неверный формат номера" if num_wagon !~ NUM_WAGON
@@ -29,3 +29,16 @@ module ValidStation
   end
 end
 
+module ValidPlace
+  PLACE = /^\d{2}$/
+  def validate!
+    raise "Количество мест должно быть в диапазоне 10-60" if place !~ PLACE
+  end
+end
+
+module ValidCargo
+  CARGO = /^\d{3}$/
+  def validate!
+    raise "Объём вагона должен быть в диапазоне 100-300" if cargo !~ CARGO
+  end
+end

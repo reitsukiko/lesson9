@@ -1,5 +1,5 @@
 class Wagon
-  attr_reader :num_wagon, wagon_type
+  attr_reader :num_wagon, wagon_type, trains
   attr_accessor :manufacturer
   
   include Company
@@ -22,7 +22,7 @@ class Wagon
   end
   
   def wagon_to_train(train)
-    @wagon = train.add_wagon if train.wagons.include?(self)
+    @trains << train if train.wagons.include?(self)
   end
 end 
 

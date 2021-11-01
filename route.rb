@@ -1,5 +1,5 @@
 class Route
-  attr_accessor :stations
+  attr_reader :stations
   
   include InstanceCounter
   
@@ -9,11 +9,12 @@ class Route
     register_instance
   end
 
-  def add_station(stations)
-    @stations.insert(-2, stations)
+  def add_station(station)
+    @stations << station
+    @stations.insert(-2, station)
   end
 
-  def delete_station(stations)
-    @stations.delete(stations)
+  def delete_station(station)
+    @stations.delete(station) if @stations.include?(station)
   end
 end
