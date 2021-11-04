@@ -36,7 +36,7 @@ class RailRoad
       when 4 then new_route
       when 5 then add_wagon
       when 6 then delete_wagon
-      when 7 then take_cargo_place
+      when 7 then cargo_place
       when 8 then add_station
       when 9 then delete_station
       when 10 then take_route
@@ -266,7 +266,7 @@ class RailRoad
     end
   end
 
-  def take_cargo_place
+  def cargo_place
     print 'Номер вагона: '
     num_wagon = gets.chomp.to_i
 
