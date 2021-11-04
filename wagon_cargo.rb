@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 class CargoWagon < Wagon
-  attr_reader :wagon_type
-
-  attr_accessor :cargo
-
   include Validation
   include ValidCargo
+
+  attr_reader :wagon_type
+  attr_accessor :cargo
 
   def initialize(num_wagon, wagon_type = 'cargo')
     super

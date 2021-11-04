@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 class Wagon
-  attr_reader :num_wagon, wagon_type, trains
-  attr_accessor :manufacturer
-
   include Company
   include Validation
   include ValidWagon
+
+  attr_reader :num_wagon, wagon_type, trains
+  attr_accessor :manufacturer
 
   @@wagons = {}
 
@@ -20,7 +20,7 @@ class Wagon
 
   def self.get_wagons
     @@wagons
-    puts "Вагоны: #{Wagon.get_wagons}"
+    puts "Вагоны: #{self.get_wagons}"
   end
 
   def wagon_to_train(train)

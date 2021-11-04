@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class PassengerWagon < Wagon
-  attr_reader :wagon_type
-  attr_accessor :place
-
   include Validation
   include ValidPlace
+
+  attr_reader :wagon_type
+  attr_accessor :place
 
   def initialize(num_wagon, wagon_type = 'passenger')
     super
