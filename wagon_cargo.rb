@@ -2,10 +2,13 @@
 
 class CargoWagon < Wagon
   include Validation
-  include ValidCargo
+  include Accessors
 
   attr_reader :wagon_type
   attr_accessor :cargo
+  validate :cargo, :format, CARGO 
+
+  CARGO = /^\d{3}$/.freeze
 
   def initialize(num_wagon, wagon_type = 'cargo')
     super

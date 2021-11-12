@@ -3,9 +3,12 @@
 class Station
   include InstanceCounter
   include Validation
-  include ValidStation
+  include Acсessors
 
   attr_reader :name, :trains
+  validate :station_name, :format, NAME
+
+  NAME = /^\w$/.freeze
 
   @@stations = []
 

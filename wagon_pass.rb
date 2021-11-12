@@ -2,10 +2,13 @@
 
 class PassengerWagon < Wagon
   include Validation
-  include ValidPlace
+  include Accessors
 
   attr_reader :wagon_type
   attr_accessor :place
+  validate :place, :format, PLACE
+
+  PLACE = /^\d{2}$/.freeze
 
   def initialize(num_wagon, wagon_type = 'passenger')
     super

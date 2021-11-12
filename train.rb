@@ -3,11 +3,15 @@
 class Train
   include Company
   include InstanceCounter
+  include Accessors
   include Validation
-  include ValidTrain
 
   attr_accessor :speed, :train_type, :manufacturer
   attr_reader :num_train, :current_station, :wagons
+  validate :num_train, :format, NUM_TRAIN
+  validate :num_train, :presence
+
+  NUM_TRAIN = /^\d{3}[а-я]{2}$/i.freeze
 
   @@trains = {}
 

@@ -1,46 +1,51 @@
 # frozen_string_literal: true
 
 module Validation
-  def valid?
-    validate!
-  rescue StandardError
-    false
+  def self.included(base)
+    base.extend(ClassMethods)
+    base.send(:include, InstanceMethods)
   end
-end
 
-module ValidTrain
-  NUM_TRAIN = /^\d{3}[а-я]{2}$/i.freeze
-  def validate!
-    raise 'Номер не может быть пустым' if num_train.nil?
-    raise 'Неверный формат номера' if num_train !~ NUM_TRAIN
-  end
-end
+  module ClassMethods
+    attr_reader :validate
 
-module ValidWagon
-  NUM_WAGON = /^\d{3}$/.freeze
-  def validate!
-    raise 'Номер не может быть пустым' if num_wagon.nil?
-    raise 'Неверный формат номера' if num_wagon !~ NUM_WAGON
+    def validate(name, type, *options)
+      @validate ||= []
+      @validate << {name: name, type: type, options: options}
+    end
   end
-end
 
-module ValidStation
-  NAME = /^\w$/.freeze
-  def validate!
-    raise 'Неверный формат' if station_name !~ NAME
-  end
-end
+  module InstanceMethods
+    def validate!
+      @error ||= []
+      self.class.validate.each do |v|
+        send(v[:type], instance_variable_get("@#{v:name]}".to_sym), v[:options])
+      end
+    end
 
-module ValidPlace
-  PLACE = /^\d{2}$/.freeze
-  def validate!
-    raise 'Количество мест должно быть в диапазоне 10-60' if place !~ PLACE
-  end
-end
+    def valid?
+      validate!
+      true
+    rescue
+      false
+    end
 
-module ValidCargo
-  CARGO = /^\d{3}$/.freeze
-  def validate!
-    raise 'Объём вагона должен быть в диапазоне 100-300' if cargo !~ CARGO
+    def validate_presence(name)
+      if instance_variable_get("@#{name}").nil? || instance_variable_get("@#{name}").empty?
+        @error << "#{name} can't be nil or empty"
+      end
+    end
+
+    def validate_type(name, class_name)
+      unless instance_variable_get("@#{name}").is_a?(class_name)
+        @error << "Error, #{name} dosn't match the class"
+      end
+    end
+
+    def validate_format(name, format)
+      if instance_variable_get("@#{name}") !~ format
+        @error << "Error, #{name} dosn't match the format"
+      end
+    end
   end
-end
+end  
